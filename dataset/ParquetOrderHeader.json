@@ -1,0 +1,110 @@
+{
+	"name": "ParquetOrderHeader",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "SalesLT/SalesOrderHeader",
+				"fileSystem": "gold"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "sales_order_id",
+				"type": "INT_32"
+			},
+			{
+				"name": "revision_number",
+				"type": "INT_32"
+			},
+			{
+				"name": "order_date",
+				"type": "UTF8"
+			},
+			{
+				"name": "due_date",
+				"type": "UTF8"
+			},
+			{
+				"name": "ship_date",
+				"type": "UTF8"
+			},
+			{
+				"name": "status",
+				"type": "INT_32"
+			},
+			{
+				"name": "online_order_flag",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "sales_order_number",
+				"type": "UTF8"
+			},
+			{
+				"name": "purchase_order_number",
+				"type": "UTF8"
+			},
+			{
+				"name": "account_number",
+				"type": "UTF8"
+			},
+			{
+				"name": "customer_id",
+				"type": "INT_32"
+			},
+			{
+				"name": "ship_to_address_id",
+				"type": "INT_32"
+			},
+			{
+				"name": "bill_to_address_id",
+				"type": "INT_32"
+			},
+			{
+				"name": "ship_method",
+				"type": "UTF8"
+			},
+			{
+				"name": "sub_total",
+				"type": "DECIMAL",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "tax_amt",
+				"type": "DECIMAL",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "freight",
+				"type": "DECIMAL",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "total_due",
+				"type": "DECIMAL",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "rowguid",
+				"type": "UTF8"
+			},
+			{
+				"name": "modified_date",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

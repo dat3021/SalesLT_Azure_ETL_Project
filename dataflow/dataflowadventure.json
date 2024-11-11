@@ -1,0 +1,271 @@
+{
+	"name": "dataflowadventure",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ParquetAddress",
+						"type": "DatasetReference"
+					},
+					"name": "sourceAddress"
+				},
+				{
+					"dataset": {
+						"referenceName": "ParquetCustomer",
+						"type": "DatasetReference"
+					},
+					"name": "sourceCustomer"
+				},
+				{
+					"dataset": {
+						"referenceName": "ParquetCustomerAddress",
+						"type": "DatasetReference"
+					},
+					"name": "sourceCustomerAddress"
+				},
+				{
+					"dataset": {
+						"referenceName": "ParquetOrderHeader",
+						"type": "DatasetReference"
+					},
+					"name": "sourceOrderHeader"
+				},
+				{
+					"dataset": {
+						"referenceName": "ParquetProduct",
+						"type": "DatasetReference"
+					},
+					"name": "sourceProduct"
+				},
+				{
+					"dataset": {
+						"referenceName": "ParquetProductCategory",
+						"type": "DatasetReference"
+					},
+					"name": "sourceProductCategory"
+				},
+				{
+					"dataset": {
+						"referenceName": "ParquetSalesOrderDetail",
+						"type": "DatasetReference"
+					},
+					"name": "sourceSalesOrderDetail"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlAddress",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSqlCustomer",
+						"type": "DatasetReference"
+					},
+					"name": "sink2"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSqlCustomerAddress",
+						"type": "DatasetReference"
+					},
+					"name": "sink3"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSqlOrderHeader",
+						"type": "DatasetReference"
+					},
+					"name": "sink4"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSqlProduct",
+						"type": "DatasetReference"
+					},
+					"name": "sink5"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSqlProductCategory",
+						"type": "DatasetReference"
+					},
+					"name": "sink6"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSqlSalesOrderDetail",
+						"type": "DatasetReference"
+					},
+					"name": "sink7"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          address_id as integer,",
+				"          address_line1 as string,",
+				"          city as string,",
+				"          state_province as string,",
+				"          country_region as string,",
+				"          postal_code as string,",
+				"          rowguid as string,",
+				"          modified_date as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> sourceAddress",
+				"source(output(",
+				"          customer_id as integer,",
+				"          name_style as boolean,",
+				"          title as string,",
+				"          first_name as string,",
+				"          middle_name as string,",
+				"          last_name as string,",
+				"          suffix as string,",
+				"          company_name as string,",
+				"          sales_person as string,",
+				"          email_address as string,",
+				"          phone as string,",
+				"          password_hash as string,",
+				"          password_salt as string,",
+				"          rowguid as string,",
+				"          modified_date as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> sourceCustomer",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> sourceCustomerAddress",
+				"source(output(",
+				"          sales_order_id as integer,",
+				"          revision_number as integer,",
+				"          order_date as string,",
+				"          due_date as string,",
+				"          ship_date as string,",
+				"          status as integer,",
+				"          online_order_flag as boolean,",
+				"          sales_order_number as string,",
+				"          purchase_order_number as string,",
+				"          account_number as string,",
+				"          customer_id as integer,",
+				"          ship_to_address_id as integer,",
+				"          bill_to_address_id as integer,",
+				"          ship_method as string,",
+				"          sub_total as decimal(19,4),",
+				"          tax_amt as decimal(19,4),",
+				"          freight as decimal(19,4),",
+				"          total_due as decimal(19,4),",
+				"          rowguid as string,",
+				"          modified_date as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> sourceOrderHeader",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> sourceProduct",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> sourceProductCategory",
+				"source(output(",
+				"          sales_order_id as integer,",
+				"          sales_order_detail_id as integer,",
+				"          order_qty as integer,",
+				"          product_id as integer,",
+				"          unit_price as decimal(19,4),",
+				"          unit_price_discount as decimal(19,4),",
+				"          line_total as decimal(38,6),",
+				"          rowguid as string,",
+				"          modified_date as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> sourceSalesOrderDetail",
+				"sourceAddress sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1",
+				"sourceCustomer sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink2",
+				"sourceCustomerAddress sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink3",
+				"sourceOrderHeader sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink4",
+				"sourceProduct sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink5",
+				"sourceProductCategory sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink6",
+				"sourceSalesOrderDetail sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink7"
+			]
+		}
+	}
+}

@@ -1,0 +1,64 @@
+{
+	"name": "ParquetSalesOrderDetail",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "SalesLT/SalesOrderDetail",
+				"fileSystem": "gold"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "sales_order_id",
+				"type": "INT_32"
+			},
+			{
+				"name": "sales_order_detail_id",
+				"type": "INT_32"
+			},
+			{
+				"name": "order_qty",
+				"type": "INT_32"
+			},
+			{
+				"name": "product_id",
+				"type": "INT_32"
+			},
+			{
+				"name": "unit_price",
+				"type": "DECIMAL",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "unit_price_discount",
+				"type": "DECIMAL",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "line_total",
+				"type": "DECIMAL",
+				"precision": 38,
+				"scale": 6
+			},
+			{
+				"name": "rowguid",
+				"type": "UTF8"
+			},
+			{
+				"name": "modified_date",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

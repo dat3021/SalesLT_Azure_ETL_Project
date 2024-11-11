@@ -1,0 +1,9 @@
+{
+	"name": "adventure2810-df",
+	"location": "southeastasia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "20e5dee0-f18d-4411-8310-ba7e3b3d6115",
+		"tenantId": "4150d5a0-6540-4251-bea3-960daba3060a"
+	}
+}
