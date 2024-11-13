@@ -30,16 +30,6 @@ The system comprises the following core components:
 
 ---
 
-## Data Model
-
-The data pipeline is organized into layers within Azure Data Lake to ensure structured data processing and management:
-
-1. **Raw Layer**: Contains unprocessed, original data from the source.
-2. **Ingested Layer**: Holds data that has passed initial validation checks.
-3. **Presentation Layer**: Stores cleansed, normalized data, ready for reporting and analysis.
-
----
-
 ## Technology Stack
 
 - **Azure Data Factory (ADF)**: Manages data orchestration and scheduling. ADF is responsible for connecting to the on-premises SQL Server, copying data to Azure, and triggering Databricks for transformations.
@@ -69,3 +59,5 @@ The data pipeline is organized into layers within Azure Data Lake to ensure stru
 2. **Transform Data with Azure Databricks**: Set up notebooks in Azure Databricks to clean and transform data from the Ingested Layer and load it into the Presentation Layer.
 3. **Load Data into Azure SQL Server**: Use Azure Data Factory to load transformed data from the Presentation Layer into Azure SQL Server.
 4. **Visualize in Tableau**: Connect Tableau to Azure SQL Server to create interactive dashboards, charts, and data analysis reports.
+---
+- Data Source: https://learn.microsoft.com/en-us/sql/samples/adventureworks-install-configure?view=sql-server-ver16&tabs=ssms
