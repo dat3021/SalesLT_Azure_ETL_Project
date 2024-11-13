@@ -49,11 +49,10 @@ The system comprises the following core components:
 ## Lessons Learned
 
 1. **Azure Data Factory**:
-    - Data Factory is powerful for orchestration and integration but should be optimized to reduce costs by limiting the number of activities, as each is billed based on runtime.
-    - Fine-tune **Data Integration Units (DIUs)** to control costs, especially for small datasets where lower DIUs can still achieve good performance.
+    - Azure Data Factory’s orchestration capabilities streamline the ETL process, helping manage dependencies between each step and ensuring data integrity throughout.
 2. **Azure Databricks**:
     - Organize data processing into logical steps within Databricks, making transformations easier to manage.
-    - Utilize Databricks for complex transformations to minimize the load on SQL Server.
+    - Integrating Databricks notebooks within the pipeline allows for scalable, distributed processing, making it suitable for data sets and transformations.
 3. **Tableau**:
     - Preparing and structuring data in the Presentation Layer significantly reduces query times and optimizes performance when visualizing data in Tableau.
 
