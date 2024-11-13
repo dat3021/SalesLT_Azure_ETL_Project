@@ -1,0 +1,654 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "adventure2810-df"
+		},
+		"SqlServer_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'SqlServer'"
+		},
+		"AzureDatabricks1_properties_typeProperties_existingClusterId": {
+			"type": "string",
+			"defaultValue": "1030-014031-qeu1rk33"
+		},
+		"SqlServer_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "LAPTOP-GPF4SNLT\\SQLEXPRESS"
+		},
+		"SqlServer_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "AdventureWorksLT2022"
+		},
+		"SqlServer_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "dat"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDatabricks1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureDatabricks",
+				"typeProperties": {
+					"domain": "https://adb-4133172830725523.3.azuredatabricks.net",
+					"accessToken": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "AzureKeyVault1",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "databrick-token"
+					},
+					"existingClusterId": "[parameters('AzureDatabricks1_properties_typeProperties_existingClusterId')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SqlServer')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"server": "[parameters('SqlServer_properties_typeProperties_server')]",
+					"database": "[parameters('SqlServer_properties_typeProperties_database')]",
+					"encrypt": "optional",
+					"trustServerCertificate": true,
+					"authenticationType": "SQL",
+					"userName": "[parameters('SqlServer_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('SqlServer_password')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "integrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SqlServerTable1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SqlServer",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [
+					{
+						"name": "AddressID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "AddressLine1",
+						"type": "nvarchar"
+					},
+					{
+						"name": "AddressLine2",
+						"type": "nvarchar"
+					},
+					{
+						"name": "City",
+						"type": "nvarchar"
+					},
+					{
+						"name": "StateProvince",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CountryRegion",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PostalCode",
+						"type": "nvarchar"
+					},
+					{
+						"name": "rowguid",
+						"type": "uniqueidentifier"
+					},
+					{
+						"name": "ModifiedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "SalesLT",
+					"table": "Address"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/SqlServer')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataflow1')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "ParquetAddress",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						},
+						{
+							"dataset": {
+								"referenceName": "ParquetCustomer",
+								"type": "DatasetReference"
+							},
+							"name": "source2"
+						},
+						{
+							"dataset": {
+								"referenceName": "ParquetCustomerAddress",
+								"type": "DatasetReference"
+							},
+							"name": "source3"
+						},
+						{
+							"dataset": {
+								"referenceName": "ParquetOrderHeader",
+								"type": "DatasetReference"
+							},
+							"name": "source4"
+						},
+						{
+							"dataset": {
+								"referenceName": "ParquetProduct",
+								"type": "DatasetReference"
+							},
+							"name": "source5"
+						},
+						{
+							"dataset": {
+								"referenceName": "ParquetProductCategory",
+								"type": "DatasetReference"
+							},
+							"name": "source6"
+						},
+						{
+							"dataset": {
+								"referenceName": "ParquetSalesOrderDetail",
+								"type": "DatasetReference"
+							},
+							"name": "source7"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "AzureSqlAddress",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						},
+						{
+							"dataset": {
+								"referenceName": "AzureSqlCustomer",
+								"type": "DatasetReference"
+							},
+							"name": "sink2"
+						},
+						{
+							"dataset": {
+								"referenceName": "AzureSqlCustomerAddress",
+								"type": "DatasetReference"
+							},
+							"name": "sink3"
+						},
+						{
+							"dataset": {
+								"referenceName": "AzureSqlOrderHeader",
+								"type": "DatasetReference"
+							},
+							"name": "sink4"
+						},
+						{
+							"dataset": {
+								"referenceName": "AzureSqlProduct",
+								"type": "DatasetReference"
+							},
+							"name": "sink5"
+						},
+						{
+							"dataset": {
+								"referenceName": "AzureSqlProductCategory",
+								"type": "DatasetReference"
+							},
+							"name": "sink6"
+						},
+						{
+							"dataset": {
+								"referenceName": "AzureSqlSalesOrderDetail",
+								"type": "DatasetReference"
+							},
+							"name": "sink7"
+						}
+					],
+					"transformations": [],
+					"scriptLines": [
+						"source(output(",
+						"          address_id as integer,",
+						"          address_line1 as string,",
+						"          city as string,",
+						"          state_province as string,",
+						"          country_region as string,",
+						"          postal_code as string,",
+						"          rowguid as string,",
+						"          modified_date as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet') ~> source1",
+						"source(output(",
+						"          customer_id as integer,",
+						"          name_style as boolean,",
+						"          title as string,",
+						"          first_name as string,",
+						"          middle_name as string,",
+						"          last_name as string,",
+						"          suffix as string,",
+						"          company_name as string,",
+						"          sales_person as string,",
+						"          email_address as string,",
+						"          phone as string,",
+						"          password_hash as string,",
+						"          password_salt as string,",
+						"          rowguid as string,",
+						"          modified_date as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet') ~> source2",
+						"source(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet') ~> source3",
+						"source(output(",
+						"          sales_order_id as integer,",
+						"          revision_number as integer,",
+						"          order_date as string,",
+						"          due_date as string,",
+						"          ship_date as string,",
+						"          status as integer,",
+						"          online_order_flag as boolean,",
+						"          sales_order_number as string,",
+						"          purchase_order_number as string,",
+						"          account_number as string,",
+						"          customer_id as integer,",
+						"          ship_to_address_id as integer,",
+						"          bill_to_address_id as integer,",
+						"          ship_method as string,",
+						"          sub_total as decimal(19,4),",
+						"          tax_amt as decimal(19,4),",
+						"          freight as decimal(19,4),",
+						"          total_due as decimal(19,4),",
+						"          rowguid as string,",
+						"          modified_date as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet') ~> source4",
+						"source(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet') ~> source5",
+						"source(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet') ~> source6",
+						"source(output(",
+						"          sales_order_id as integer,",
+						"          sales_order_detail_id as integer,",
+						"          order_qty as integer,",
+						"          product_id as integer,",
+						"          unit_price as decimal(19,4),",
+						"          unit_price_discount as decimal(19,4),",
+						"          line_total as decimal(38,6),",
+						"          rowguid as string,",
+						"          modified_date as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet') ~> source7",
+						"source1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sink1",
+						"source2 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sink2",
+						"source3 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sink3",
+						"source4 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sink4",
+						"source5 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sink5",
+						"source6 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sink6",
+						"source7 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sink7"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Datapipeline_OnPremise')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "LookupTableName",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"sqlReaderQuery": "SELECT s.name AS SchemaName, t.name AS TableName FROM sys.tables t inner join sys.schemas s on t.schema_id = s.schema_id where s.name = 'SalesLT'",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "SqlServerTable1",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForEachTableName",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "LookupTableName",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('LookupTableName').output.value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copydatalookup",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "SqlServerSource",
+											"sqlReaderQuery": {
+												"value": "@{concat('SELECT * FROM ', item().SchemaName,'.',item().TableName)}",
+												"type": "Expression"
+											},
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "ParquetSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "ParquetWriteSettings"
+											}
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "SqlServerTable1",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "ParquetBronze",
+											"type": "DatasetReference",
+											"parameters": {
+												"schemaname": {
+													"value": "@item().SchemaName",
+													"type": "Expression"
+												},
+												"tablename": {
+													"value": "@item().TableName",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					},
+					{
+						"name": "Bronze to Silver",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "ForEachTableName",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/thanhdat12032002@gmail.com/bronze to silver"
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks1",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Silver to Gold",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "Bronze to Silver",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/thanhdat12032002@gmail.com/silver to gold"
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks1",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Gold to AzureSql",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "Silver to Gold",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "dataflow1",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"source2": {},
+									"source3": {},
+									"source4": {},
+									"source5": {},
+									"source6": {},
+									"source7": {},
+									"sink1": {},
+									"sink2": {},
+									"sink3": {},
+									"sink4": {},
+									"sink5": {},
+									"sink6": {},
+									"sink7": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2024-11-06T05:55:47Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SqlServerTable1')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks1')]",
+				"[concat(variables('factoryId'), '/dataflows/dataflow1')]"
+			]
+		}
+	]
+}
