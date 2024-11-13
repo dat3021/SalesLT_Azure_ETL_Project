@@ -21,11 +21,17 @@ The system comprises the following core components:
     - **Ingested Layer**: Contains data that has undergone basic validation and ingestion checks.
     - **Presentation Layer**: Holds cleansed and processed data, ready for analysis or loading into Azure SQL Server.
 3. **Azure SQL Server**: Acts as the final storage point, making data readily accessible for Tableau visualization.
-4. **Tableau**: Used for data visualization, creating reports and dashboards for end-users.
-5. **Azure Data Factory**:
+4. **Azure Data Factory**:
     - **Orchestration**: Manages and orchestrates ETL tasks, including copying data from on-premises SQL to Azure Data Lake and performing transformations.
     - **Data Ingestion**: Copies data from on-premises SQL Server to Azure Data Lake on a scheduled basis.
-6. **Azure Databricks**: Processes and transforms data, performing complex transformations and calculations before loading into the Presentation Layer.
+        - LookupTableName:
+            - Description: The pipeline begins with a Lookup activity, which retrieves a list of table names or identifiers from a specified source. This step enables the pipeline to dynamically process multiple tables or datasets in subsequent steps.
+        - ForEachTableName:
+            - Description: The ForEachTableName activity iterates over the table names and the schema name retrieved in a json file of the LookupTableName step. For each table, it initiates the data copying and transformation processes outlined in the subsequent steps.
+      ![image](https://github.com/user-attachments/assets/7a70104c-1d10-48c7-871f-6d78c7c1c448)
+
+5. **Azure Databricks**: Processes and transforms data, performing transformations and calculations before loading into the Presentation Layer.
+6. **Tableau**: Used for data visualization, Tableau will be configured to connect to Azure SQL server and creating reports and dashboards.
 ![Biểu đồ không có tiêu đề drawio (3)](https://github.com/user-attachments/assets/c45b97c5-93d5-493c-8ef5-b783f997e65d)
 
 ---
