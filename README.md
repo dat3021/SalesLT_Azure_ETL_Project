@@ -17,7 +17,7 @@ The system comprises the following core components:
 
 1. **Data Source (On-Premise SQL Server)**: The initial source of raw data stored in an on-premises SQL Server.
 2. **Azure Data Lake Storage Gen 2**:
-    - **Raw Layer**: Stores raw, unprocessed data as-is from the source.
+    - **Raw Layer**: Stores raw data, unprocessed data as-is from the source.
     - **Ingested Layer**: Contains data that has undergone basic validation and ingestion checks.
     - **Presentation Layer**: Holds cleansed and processed data, ready for analysis or loading into Azure SQL Server.
 3. **Azure SQL Server**: Acts as the final storage point, making data readily accessible for Tableau visualization.
